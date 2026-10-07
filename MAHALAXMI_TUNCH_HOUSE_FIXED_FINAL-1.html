@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAHALAXMI TUNCH HOUSE</title>
+<style>
+*{box-sizing:border-box}body{font-family:Arial,sans-serif;background:#f2f2f2;margin:0;padding:12px;color:#111}.wrap{max-width:620px;margin:auto;background:#fff;padding:14px;border-radius:10px}.title{text-align:center;font-weight:700;font-size:22px}.sub{text-align:center;font-weight:700;margin:4px 0 14px}.row{margin:8px 0}.row label{display:block;font-weight:700;margin-bottom:4px}.row input{width:100%;padding:9px;border:1px solid #aaa;border-radius:6px;font-size:16px}.gold-list{border:1px solid #aaa;border-radius:8px;padding:8px;margin-top:8px}.gold-item{border:1px solid #ddd;border-radius:7px;padding:8px;margin-bottom:8px}.gold-head{display:flex;justify-content:space-between;font-weight:700;margin-bottom:6px}.gold-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}.gold-fields label{font-size:13px;font-weight:700}.gold-fields input{width:100%;padding:8px;border:1px solid #aaa;border-radius:5px;font-size:16px}.remove{border:0;background:#eee;padding:4px 8px;border-radius:5px}.add{width:100%;padding:10px;border:1px solid #333;background:#fff;border-radius:6px;font-weight:700}.receipt{border:1px dashed #777;margin-top:14px;padding:12px}.center{text-align:center}.line{border-top:1px dashed #777;margin:10px 0}.result-row{display:flex;justify-content:space-between;gap:8px;margin:5px 0}.fine-table{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px}.fine-table th,.fine-table td{border:1px solid #aaa;padding:5px;text-align:center}.total{font-size:20px;font-weight:700;text-align:center;border:2px solid #111;padding:8px;margin-top:10px}.diff{padding:8px;border:1px solid #aaa;margin-top:8px}.btn{width:100%;padding:11px;margin-top:8px;border:0;border-radius:6px;background:#111;color:#fff;font-weight:700}.btn.secondary{background:#555}.history{margin-top:16px;border-top:1px solid #aaa;padding-top:12px}.history-item{border:1px solid #bbb;padding:9px;margin:6px 0;border-radius:6px}.history-main{cursor:pointer}.small{font-size:12px;color:#555}.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);align-items:center;justify-content:center;padding:14px}.modal-box{background:#fff;width:min(520px,100%);max-height:90vh;overflow:auto;border-radius:9px;padding:14px}.modal-top{display:flex;justify-content:space-between;font-weight:700}.detail{display:flex;justify-content:space-between;border-bottom:1px solid #ddd;padding:6px 0;gap:10px}.detail span:last-child{text-align:right;font-weight:700}.danger{background:#b00020}.no-print{}.print-only{display:none}
+@media print{body{background:#fff;padding:0}.wrap{width:55mm;max-width:55mm;margin:0;padding:3mm;border-radius:0}.no-print,.history,.modal{display:none!important}.print-only{display:block}.title{font-size:16px}.sub{font-size:12px}.receipt{border:0;padding:0;margin-top:5px}.fine-table{font-size:10px}.fine-table th,.fine-table td{padding:2px}.result-row{font-size:11px}.total{font-size:15px;padding:5px}.diff{font-size:11px;padding:5px}@page{size:55mm auto;margin:0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="title">MAHALAXMI TUNCH HOUSE</div>
+<div class="sub">GOLD TESTING RECEIPT</div>
+
+<div class="no-print">
+<div class="row"><label>Customer Name</label><input id="customer" type="text"></div>
+<div class="row"><label>Date</label><input id="date" type="date"></div>
+
+<div class="row">
+<label>Gold Weight & Purity</label>
+<div id="goldList" class="gold-list"></div>
+<button class="add" type="button" onclick="addGoldRow()">+ ADD GOLD</button>
+<div class="small">Har gold item ka weight aur uski purity alag bhar sakte hain. Fine har item ka alag aur neeche TOTAL FINE hoga.</div>
+</div>
+
+<div class="row"><label>Gold Rate ₹/gram (optional)</label><input id="rate" type="number" step="0.01"></div>
+<div class="row"><label>Actual Fine (optional)</label><input id="actualFine" type="number" step="0.001"></div>
+<div class="row"><label>Piece</label><input id="piece" type="number" min="1" step="1" value="1"></div>
+<div class="row"><label>Testing Charge ₹ (optional)</label><input id="testingCharge" type="number" step="0.01"></div>
+<button class="btn" type="button" onclick="calculate()">CALCULATE</button>
+</div>
+
+<div class="receipt" id="receipt">
+<div class="center" style="font-weight:700;font-size:18px;margin-bottom:8px"><b id="rDate">-</b></div>
+<div class="result-row"><span>Customer</span><b id="rCustomer">-</b></div>
+<div class="result-row"><span>Piece</span><b id="rPiece">-</b></div>
+<div class="result-row"><span>Gold Rate</span><b id="rRate">-</b></div>
+<table class="fine-table"><thead><tr><th>#</th><th>Weight g</th><th>Purity %</th><th>Fine g</th></tr></thead><tbody id="fineBody"></tbody><tfoot><tr><th colspan="3">TOTAL FINE</th><th id="rFine">0.000</th></tr></tfoot></table>
+<div class="result-row"><span>Actual Fine</span><b id="rActual">-</b></div>
+<div class="diff" id="diffBox">Cash Difference</div>
+<div class="result-row"><span>Testing Charge</span><b id="rTesting">₹0.00</b></div>
+<div class="total">TOTAL <span id="rTotal">0.00</span></div>
+</div>
+
+<div class="no-print">
+<button class="btn" type="button" onclick="saveAndPrint()">PRINT & SAVE BILL</button>
+<button class="btn secondary" type="button" onclick="clearBill()">CLEAR</button>
+</div>
+
+<div class="history no-print"><b>SAVED BILLS</b><button class="btn secondary" type="button" onclick="showHistory()">SHOW SAVED BILLS</button><div id="historyList"></div></div>
+</div>
+
+<div id="billModal" class="modal" onclick="if(event.target===this)hideBillModal()"><div class="modal-box"><div class="modal-top"><span>Bill Details</span><button onclick="hideBillModal()">X</button></div><div id="modalContent"></div><button class="btn secondary" onclick="hideBillModal()">CLOSE</button></div></div>
+
+<script>
+const HISTORY_KEY='mahalaxmi_tunch_house_bills_v1';
+const today=new Date();
+document.getElementById('date').value=today.toISOString().split('T')[0];
+
+function roundFine(v){return Math.round((v+1e-9)*100)/100;}
+function formatDate(v){if(!v)return '-';const d=new Date(v+'T00:00:00');return d.toLocaleDateString('en-IN',{day:'2-digit',month:'2-digit',year:'numeric'});}
+function money(v){return '₹'+Number(v||0).toFixed(2);}
+function esc(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+
+function addGoldRow(weight='',purity=''){
+ const list=document.getElementById('goldList');
+ const div=document.createElement('div');div.className='gold-item';
+ const n=list.children.length+1;
+ div.innerHTML=`<div class="gold-head"><span>Gold ${n}</span>${list.children.length?'<button class="remove" type="button" onclick="this.closest(\'.gold-item\').remove();renumberGold()">Remove</button>':''}</div><div class="gold-fields"><label>Weight (gram)<input class="g-weight" type="number" step="0.001" min="0" value="${weight}"></label><label>Purity (%)<input class="g-purity" type="number" step="0.01" min="0" max="100" value="${purity}"></label></div>`;
+ list.appendChild(div);
+}
+function renumberGold(){[...document.querySelectorAll('.gold-item')].forEach((x,i)=>x.querySelector('.gold-head span').textContent='Gold '+(i+1));}
+addGoldRow();
+
+function getGolds(){return [...document.querySelectorAll('.gold-item')].map(x=>({weight:parseFloat(x.querySelector('.g-weight').value)||0,purity:parseFloat(x.querySelector('.g-purity').value)||0})).filter(x=>x.weight>0||x.purity>0);}
+function calculate(){
+ const customer=document.getElementById('customer').value.trim();
+ const date=document.getElementById('date').value;
+ const rate=parseFloat(document.getElementById('rate').value)||0;
+ const actual=parseFloat(document.getElementById('actualFine').value);
+ const piece=parseInt(document.getElementById('piece').value,10)||0;
+ const testing=parseFloat(document.getElementById('testingCharge').value)||0;
+ const golds=getGolds();
+ let totalFine=0;
+ const body=document.getElementById('fineBody');body.innerHTML='';
+ golds.forEach((g,i)=>{const fine=roundFine(g.weight*g.purity/100);totalFine+=fine;const tr=document.createElement('tr');tr.innerHTML=`<td>${i+1}</td><td>${g.weight.toFixed(3)}</td><td>${g.purity.toFixed(2)}</td><td>${fine.toFixed(3)}</td>`;body.appendChild(tr);});
+ totalFine=roundFine(totalFine);
+ document.getElementById('rDate').textContent=formatDate(date);document.getElementById('rCustomer').textContent=customer||'-';document.getElementById('rPiece').textContent=piece||'-';document.getElementById('rRate').textContent=rate?money(rate)+'/g':'-';document.getElementById('rFine').textContent=totalFine.toFixed(3);document.getElementById('rActual').textContent=Number.isFinite(actual)?actual.toFixed(3):'-';document.getElementById('rTesting').textContent=money(testing);
+ let diff=0,cash=0,label='Cash Difference';
+ if(Number.isFinite(actual)&&rate>0){diff=roundFine(actual-totalFine);cash=(diff===0?0:diff*rate);if(diff>0)label='Cash Dena';else if(diff<0)label='Cash Lena';}
+ document.getElementById('diffBox').textContent=label+(Number.isFinite(actual)&&rate>0?` : ${diff.toFixed(3)} g = ${money(cash)}`:'');
+ let total=cash+testing;document.getElementById('rTotal').textContent=(total<0?'-':'')+'₹'+Math.abs(total).toFixed(2);
+ return {customer,date,rate,actualFine:Number.isFinite(actual)?actual:null,piece,testingCharge:testing,golds,totalFine,difference:diff,cash,cashLabel:label,total};
+}
+
+document.getElementById('customer').addEventListener('input',calculate);document.getElementById('date').addEventListener('change',calculate);
+function getBills(){try{const bills=JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]');const now=Date.now(),limit=15*24*60*60*1000;const fresh=bills.filter(b=>(now-Number(b.id))<limit);if(fresh.length!==bills.length)localStorage.setItem(HISTORY_KEY,JSON.stringify(fresh));return fresh;}catch(e){return[];}}
+function saveAndPrint(){const bill=calculate();if(!bill.customer){alert('Customer Name bhariye');return;}bill.id=Date.now();const bills=getBills();bills.push(bill);localStorage.setItem(HISTORY_KEY,JSON.stringify(bills));window.print();setTimeout(showHistory,300);}
+function showHistory(){const list=document.getElementById('historyList');const bills=getBills().sort((a,b)=>b.id-a.id);if(!bills.length){list.innerHTML='<div class="small">Abhi koi saved bill nahi hai.</div>';return;}const groups={};bills.forEach(b=>(groups[b.date]??=[]).push(b));let html='';Object.keys(groups).sort().reverse().forEach(d=>{html+=`<div style="margin-top:10px"><b>${formatDate(d)}</b></div>`;groups[d].forEach(b=>{html+=`<div class="history-item"><div class="history-main" onclick="showBillDetails(${b.id})"><b>${esc(b.customer)}</b><br><span class="small">${b.golds.length} gold item • Total Fine ${b.totalFine.toFixed(3)} g • Total ${money(b.total)}</span></div><button class="btn danger" onclick="deleteBill(${b.id})">DELETE</button></div>`;});});list.innerHTML=html;}
+function showBillDetails(id){const b=getBills().find(x=>Number(x.id)===Number(id));if(!b)return;let html=`<div class="detail"><span>Date</span><span>${formatDate(b.date)}</span></div><div class="detail"><span>Customer</span><span>${esc(b.customer)}</span></div><div class="detail"><span>Piece</span><span>${b.piece||'-'}</span></div>`;b.golds.forEach((g,i)=>{html+=`<div class="detail"><span>Gold ${i+1} Weight</span><span>${g.weight.toFixed(3)} g</span></div><div class="detail"><span>Gold ${i+1} Purity</span><span>${g.purity.toFixed(2)}%</span></div><div class="detail"><span>Gold ${i+1} Fine</span><span>${roundFine(g.weight*g.purity/100).toFixed(3)} g</span></div>`;});html+=`<div class="detail"><span>TOTAL FINE</span><span>${b.totalFine.toFixed(3)} g</span></div><div class="detail"><span>Gold Rate</span><span>${b.rate?money(b.rate)+'/g':'-'}</span></div><div class="detail"><span>Actual Fine</span><span>${b.actualFine==null?'-':Number(b.actualFine).toFixed(3)}</span></div><div class="detail"><span>${esc(b.cashLabel)}</span><span>${money(b.cash)}</span></div><div class="detail"><span>Testing Charge</span><span>${money(b.testingCharge)}</span></div><div class="detail"><span>TOTAL</span><span>${money(b.total)}</span></div>`;document.getElementById('modalContent').innerHTML=html;document.getElementById('billModal').style.display='flex';}
+function hideBillModal(){document.getElementById('billModal').style.display='none';}
+function deleteBill(id){if(!confirm('Is bill ko delete karein?'))return;const bills=getBills().filter(b=>Number(b.id)!==Number(id));localStorage.setItem(HISTORY_KEY,JSON.stringify(bills));showHistory();}
+function clearHistory(){if(!confirm('Saare saved bills delete karein?'))return;localStorage.removeItem(HISTORY_KEY);showHistory();}
+function clearBill(){document.getElementById('customer').value='';document.getElementById('rate').value='';document.getElementById('actualFine').value='';document.getElementById('piece').value='1';document.getElementById('testingCharge').value='';document.getElementById('goldList').innerHTML='';addGoldRow();calculate();}
+calculate();
+</script>
+</body>
+</html>
